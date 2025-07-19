@@ -56,6 +56,8 @@ Add the following to your configuration (e.g., `.github/smart-pr-config.json` or
 
 > **Note:** Only one system (Jira or Redmine) should be enabled at a time.
 
+
+
 ## Expanded Configuration Example
 
 ```json
