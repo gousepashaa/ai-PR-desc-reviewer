@@ -1,0 +1,23 @@
+name: 'Smart PR Description Generator'
+description: 'AI-powered tool to generate comprehensive pull request descriptions'
+author: 'BizCloud Experts'
+
+inputs:
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+  openai-api-key:
+    description: 'OpenAI API key for generating descriptions'
+    required: true
+  skip-if-body-exists:
+    description: 'Skip generation if PR already has a description'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'node16'
+  main: 'src/index.js'
+
+branding:
+  icon: 'edit-3'
+  color: 'blue'
