@@ -1,6 +1,6 @@
-# Smart PR Description Generator
+# Smart PR Description Reviewer
 
-An AI-powered GitHub Action that automatically generates comprehensive pull request descriptions by analyzing code changes, commit messages, and related context.
+An AI-powered GitHub Action that automatically reviews and validates pull request descriptions to ensure they provide adequate context and accurately explain code changes.
 
 ## Problem Solved
 
@@ -13,69 +13,99 @@ Developers often create minimal or inconsistent pull request descriptions that d
 
 ## Features
 
-- Automatically generates detailed PR descriptions when PRs are created or updated
-- Analyzes code changes to understand what was modified
-- Extracts context from commit messages and branch names
-- Identifies related tickets/issues
-- Customizes description format based on PR type (feature, bugfix, etc.)
-- Preserves any existing manual description content
-- Notifies the PR author when a description is generated
+- Automatically reviews PR descriptions when PRs are created or updated
+- Uses AI to analyze if descriptions accurately explain code changes
+- Scores descriptions from 0-100% based on completeness, accuracy, and clarity
+- Provides detailed feedback on what's missing or unclear
+- Posts review comments directly on the PR
+- Configurable minimum score thresholds
+- Helps enforce PR description standards across your team
+- Supports custom configuration for different project needs
 
 ## Setup Instructions
 
-1. Add this GitHub Action to your repository
-2. Configure your OpenAI API key as a repository secret named `OPENAI_API_KEY`
-3. That's it! The action will run automatically on new PRs
+### Basic Setup
+1. Add this GitHub Action to your repository by creating `.github/workflows/pr-reviewer.yml`:
 
-## Ticket System Integration (Jira/Redmine)
+```yaml
+name: PR Description Reviewer
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
 
-You can enable integration with Jira or Redmine to automatically fetch ticket details (summary, description) for any ticket references found in branch names or commit messages. These details will be included in the generated PR description for richer context.
-
-### Enabling Jira Integration
-
-Add the following to your configuration (e.g., `.github/smart-pr-config.json` or `config/default.json`):
-
-```json
-"jira": {
-  "enabled": true,
-  "baseUrl": "https://your-jira-instance.atlassian.net",
-  "username": "your-jira-username",
-  "apiToken": "your-jira-api-token"
-}
+jobs:
+  review-pr-description:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          min-score: '80'
 ```
 
-### Enabling Redmine Integration
+2. Add your OpenAI API key as a repository secret named `OPENAI_API_KEY`
+3. That's it! The action will review PR descriptions automatically
 
-```json
-"redmine": {
-  "enabled": true,
-  "baseUrl": "https://your-redmine-instance.com",
-  "apiKey": "your-redmine-api-key"
-}
-```
+### Configuration
 
-> **Note:** Only one system (Jira or Redmine) should be enabled at a time.
-
-## Expanded Configuration Example
+Create a `config/default.json` file to customize the reviewer behavior:
 
 ```json
 {
-  "templates": {
-    "feature": "Your custom template for features",
-    "bugfix": "Your custom template for bugfixes"
-  },
-  "skipLabels": ["documentation", "no-description"],
-  "addComment": true,
-  "jira": {
-    "enabled": false,
-    "baseUrl": "https://your-jira-instance.atlassian.net",
-    "username": "your-jira-username",
-    "apiToken": "your-jira-api-token"
-  },
-  "redmine": {
-    "enabled": false,
-    "baseUrl": "https://your-redmine-instance.com",
-    "apiKey": "your-redmine-api-key"
-  }
+  "minReviewScore": 80,
+  "skipLabels": ["documentation", "no-review"],
+  "enableDetailedFeedback": true
 }
 ```
+
+#### Configuration Options
+
+- `minReviewScore` (default: 80): Minimum score required to pass review
+- `skipLabels`: Array of PR labels that will skip the review process
+- `enableDetailedFeedback`: Whether to provide detailed improvement suggestions
+
+## How It Works
+
+1. **Trigger**: Runs when PRs are opened, edited, or updated
+2. **Analysis**: AI analyzes the PR description against code changes context
+3. **Scoring**: Provides a 0-100% score based on:
+   - Completeness of explanation
+   - Accuracy of description
+   - Clarity of communication
+4. **Feedback**: Posts a comment with score and specific improvement suggestions
+5. **Pass/Fail**: Comments indicate whether the description meets your team's standards
+
+## Example Output
+
+The reviewer will post comments like:
+
+**✅ High Score (85%)**
+```
+✅ PR Description Review
+
+Score: 85%
+
+Great job! Your PR description is clear and complete.
+```
+
+**🚩 Low Score (45%)**
+```
+🚩 PR Description Review
+
+Score: 45%
+
+Your PR description needs improvement:
+- Missing explanation of why these changes were made
+- No mention of the affected components
+- Consider adding testing information
+```
+
+## Contributing
+
+We welcome contributions! Please feel free to submit issues and pull requests.
+
+## License
+
+MIT License - see LICENSE file for details.
