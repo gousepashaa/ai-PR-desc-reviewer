@@ -9,6 +9,7 @@ async function run() {
     // Get inputs
     const githubToken = core.getInput('github-token', { required: true });
     const openaiApiKey = core.getInput('openai-api-key', { required: true });
+    const minScore = parseInt(core.getInput('min-score') || '80');
     // Get PR context
     const context = github.context;
     if (!context.payload.pull_request) {
@@ -38,8 +39,9 @@ async function run() {
     };
     // Optionally, you can add more analysis logic here or import a minimal analyzer if needed
     const review = await reviewDescription(analysis, pullRequest.body || '', openaiApiKey);
-    const minScore = config.minReviewScore || 80;
-    if (review.score !== null && review.score < minScore) {
+    const configMinScore = config.minReviewScore || 80;
+    const finalMinScore = minScore || configMinScore;
+    if (review.score !== null && review.score < finalMinScore) {
       await octokit.rest.issues.createComment({
         ...repo,
         issue_number: prNumber,

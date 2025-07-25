@@ -1,5 +1,5 @@
-name: 'Smart PR Description Generator'
-description: 'AI-powered tool to generate comprehensive pull request descriptions'
+name: 'Smart PR Description Reviewer'
+description: 'AI-powered tool to review and validate pull request descriptions'
 author: 'BizCloud Experts'
 
 inputs:
@@ -7,12 +7,12 @@ inputs:
     description: 'GitHub token for API access'
     required: true
   openai-api-key:
-    description: 'OpenAI API key for generating descriptions'
+    description: 'OpenAI API key for reviewing descriptions'
     required: true
-  skip-if-body-exists:
-    description: 'Skip generation if PR already has a description'
+  min-score:
+    description: 'Minimum score required to pass review (0-100)'
     required: false
-    default: 'false'
+    default: '80'
 
 runs:
   using: 'node16'

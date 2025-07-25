@@ -1,7 +1,7 @@
 {
-  "name": "smart-pr-description-generator",
+  "name": "smart-pr-description-reviewer",
   "version": "1.0.0",
-  "description": "AI-powered tool to generate comprehensive PR descriptions",
+  "description": "AI-powered tool to review and validate PR descriptions",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -13,7 +13,9 @@
     "pull-request",
     "ai",
     "automation",
-    "description-generator"
+    "description-reviewer",
+    "code-review",
+    "validation"
   ],
   "author": "BizCloud Experts",
   "license": "MIT",
